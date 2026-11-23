@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gaston Design — Designer UX/UI & Développeur Front-end</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23012A2D'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='13' font-weight='600' fill='white' text-anchor='middle'%3EGD%3C/text%3E%3C/svg%3E" />
+  <meta name="description" content="Portfolio de Gaston Design : design produit, UX/UI, design systems et intégration front-end." />
+
+  <script>
+    try {
+      if (localStorage.getItem('portfolio-theme') === 'dark') document.documentElement.classList.add('dark');
+    } catch (e) {}
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+            display: ['"Space Grotesk"', '"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cyanAccent: '#2BA4AC',
+            amberAccent: '#F39322',
+            deepTeal: '#012A2D',
+            abyssal: '#061B1D',
+          },
+          transitionTimingFunction: {
+            futuristic: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ==========================================================================
+       TOKENS — REFONTE LIGHT ÉDITORIAL (IVOIRE, SURFACES BLANCHES, CYAN, AMBRE)
+       ========================================================================== */
+    :root {
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --bg-canvas: #FBFBF9;
+      --bg-surface: #FFFFFF;
+      --bg-surface-elevated: rgba(255, 255, 255, 0.88);
+      --border-hairline: #E7ECEC;
+      --text-primary: #012A2D;
+      --text-secondary: #5F6B6D;
+      --accent: #2BA4AC;
+      --accent-soft: rgba(43, 164, 172, 0.08);
+      --card-shadow: 0 18px 40px -24px rgba(1, 42, 45, 0.16);
+    }
+
+    html.dark {
+      --bg-canvas: #061B1D;
+      --bg-surface: #012A2D;
+      --bg-surface-elevated: rgba(1, 42, 45, 0.9);
+      --border-hairline: rgba(43, 164, 172, 0.22);
+      --text-primary: #F0F9FA;
+      --text-secondary: #94B8BC;
+      --accent: #2BA4AC;
+      --accent-soft: rgba(43, 164, 172, 0.14);
+      --card-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.45s ease, color 0.45s ease;
+    }
+
+    .theme-surface { background-color: var(--bg-surface); }
+    .theme-canvas { background-color: var(--bg-canvas); }
+    .theme-border { border-color: var(--border-hairline); }
+    .theme-text { color: var(--text-primary); }
+    .theme-muted { color: var(--text-secondary); }
+    .hover\:theme-text:hover { color: var(--text-primary); }
+
+    .editorial-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 24px;
+      overflow: hidden;
+      transition:
+        transform 0.45s var(--ease-out-expo),
+        box-shadow 0.45s var(--ease-out-expo),
+        border-color 0.3s ease;
+    }
+    .editorial-card:hover,
+    .editorial-card:focus-visible {
+      transform: translateY(-3px);
+      border-color: rgba(43, 164, 172, 0.45);
+      box-shadow: var(--card-shadow);
+      outline: none;
+    }
+    .editorial-card .card-visual {
+      transition: transform 0.7s var(--ease-out-expo);
+    }
+    .editorial-card:hover .card-visual {
+      transform: scale(1.03);
+    }
+
+    /* Apparition douce au chargement / au scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* Menu mobile */
+    #mobile-menu {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: opacity 0.22s var(--ease-out-expo), transform 0.22s var(--ease-out-expo), visibility 0s linear 0.22s;
+    }
+    #mobile-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+      transition-delay: 0s;
+    }
+
+    /* Tiroir d'étude de cas */
+    .drawer-backdrop {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s var(--ease-out-expo);
+    }
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .drawer-panel {
+      transform: translateX(100%);
+      transition: transform 0.55s var(--ease-out-expo);
+    }
+    .drawer-backdrop.open .drawer-panel {
+      transform: translateX(0%);
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-canvas); }
+    ::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 9999px; }
+  </style>
+</head>
+<body class="selection:bg-cyanAccent/20 selection:text-cyanAccent">
+
+  <!-- ========================================================================
+       HEADER
+       ======================================================================== -->
+  <header class="pointer-events-none fixed inset-x-0 top-0 z-40 px-4 pt-4 sm:px-8">
+    <div class="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border theme-border px-4 py-2.5 backdrop-blur-xl" style="background-color: var(--bg-surface-elevated);">
+      <a href="#top" class="flex items-center gap-2" aria-label="Retour en haut de page">
+        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-deepTeal font-mono text-xs font-semibold tracking-tighter text-white dark:bg-cyanAccent dark:text-abyssal">GD</span>
+        <span class="text-sm font-semibold tracking-tight theme-text">Gaston Design</span>
+      </a>
+
+      <nav aria-label="Navigation principale" class="hidden items-center gap-1 md:flex">
+        <a href="#section-projets" data-nav="projets" class="nav-link rounded-full px-4 py-2 text-sm transition-colors theme-muted hover:theme-text">Projets</a>
+        <a href="#section-approche" data-nav="approche" class="nav-link rounded-full px-4 py-2 text-sm transition-colors theme-muted hover:theme-text">Approche</a>
+        <a href="#section-experience" data-nav="experience" class="nav-link rounded-full px-4 py-2 text-sm transition-colors theme-muted hover:theme-text">Expérience</a>
+        <a href="#section-contact" data-nav="contact" class="nav-link rounded-full px-4 py-2 text-sm transition-colors theme-muted hover:theme-text">Contact</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button id="theme-toggle-btn" type="button" aria-label="Basculer entre le mode clair et le mode sombre" class="flex h-9 w-9 items-center justify-center rounded-full border theme-border theme-canvas theme-text transition-colors hover:border-cyanAccent">
+          <svg class="hidden h-4 w-4 text-amberAccent dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          <svg class="block h-4 w-4 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+
+        <a href="#section-contact" class="hidden items-center gap-2 rounded-full bg-deepTeal px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-cyanAccent dark:bg-cyanAccent dark:text-abyssal dark:hover:bg-amberAccent sm:flex">
+          <span class="h-1.5 w-1.5 rounded-full bg-amberAccent dark:bg-abyssal"></span>
+          Disponible
+        </a>
+
+        <button id="mobile-menu-btn" type="button" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="mobile-menu" class="flex h-9 w-9 items-center justify-center rounded-full border theme-border theme-text md:hidden">
+          <svg id="icon-menu" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          <svg id="icon-close" class="hidden h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" class="mx-auto mt-2 max-w-6xl rounded-3xl border theme-border p-2 backdrop-blur-xl md:hidden" style="background-color: var(--bg-surface-elevated);">
+      <a href="#section-projets" class="mobile-link block rounded-2xl px-4 py-3 text-sm font-medium theme-text transition-colors hover:bg-[var(--accent-soft)]">Projets</a>
+      <a href="#section-approche" class="mobile-link block rounded-2xl px-4 py-3 text-sm font-medium theme-text transition-colors hover:bg-[var(--accent-soft)]">Approche</a>
+      <a href="#section-experience" class="mobile-link block rounded-2xl px-4 py-3 text-sm font-medium theme-text transition-colors hover:bg-[var(--accent-soft)]">Expérience</a>
+      <a href="#section-contact" class="mobile-link block rounded-2xl px-4 py-3 text-sm font-medium theme-text transition-colors hover:bg-[var(--accent-soft)]">Contact</a>
+    </div>
+  </header>
+
+  <main id="top" class="relative z-10">
+
+    <!-- ======================================================================
+         HERO
+         ====================================================================== -->
+    <section id="section-hero" class="mx-auto max-w-6xl px-5 pb-16 pt-32 sm:px-8 sm:pb-24 sm:pt-40">
+      <div class="grid items-center gap-12 lg:grid-cols-12">
+        <div class="reveal lg:col-span-7">
+          <p class="text-sm font-medium text-cyanAccent">Designer UX/UI &amp; Développeur Front-end · Paris &amp; Remote</p>
+
+          <h1 class="mt-5 text-4xl font-semibold leading-[1.05] tracking-[-0.03em] theme-text sm:text-6xl lg:text-[64px]">
+            Des interfaces claires, utiles et mémorables.
+          </h1>
+
+          <p class="mt-6 max-w-xl text-lg leading-relaxed theme-muted">
+            Je conçois des produits numériques clairs, des design systems évolutifs et des micro-interactions fluides qui allient rigueur ergonomique et soin du détail.
+          </p>
+
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a href="#section-projets" class="group inline-flex items-center gap-2 rounded-full bg-deepTeal px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-cyanAccent dark:bg-cyanAccent dark:text-abyssal dark:hover:bg-amberAccent">
+              Explorer les études de cas
+              <svg class="h-4 w-4 transition-transform group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+            </a>
+            <button type="button" data-copy-email class="rounded-full border theme-border theme-surface px-6 py-3.5 text-sm font-medium theme-text transition-colors hover:border-cyanAccent">
+              <span data-email-label>hello@gastondesign.com</span>
+            </button>
+          </div>
+
+          <dl class="mt-12 grid max-w-lg grid-cols-3 gap-4 border-t theme-border pt-6">
+            <div>
+              <dt class="text-xs theme-muted">Expérience</dt>
+              <dd class="mt-1 text-xl font-semibold tracking-tight theme-text sm:text-2xl">7+ ans</dd>
+            </div>
+            <div>
+              <dt class="text-xs theme-muted">Produits livrés</dt>
+              <dd class="mt-1 text-xl font-semibold tracking-tight theme-text sm:text-2xl">24</dd>
+            </div>
+            <div>
+              <dt class="text-xs theme-muted">Impact moyen</dt>
+              <dd class="mt-1 text-xl font-semibold tracking-tight text-cyanAccent sm:text-2xl">+38% conv.</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="reveal lg:col-span-5" style="transition-delay: 100ms;">
+          <!-- Remplacez ce bloc par <img src="votre-portrait.jpg" alt="Portrait de Gaston Design" class="aspect-[4/5] w-full object-cover object-top" /> -->
+          <div class="relative overflow-hidden rounded-[32px] border theme-border theme-surface">
+            <div class="flex aspect-[4/5] w-full flex-col justify-between bg-gradient-to-br from-cyanAccent/15 via-transparent to-amberAccent/10 p-8">
+              <div class="flex items-center justify-between font-mono text-[11px] theme-muted">
+                <span>PORTFOLIO</span>
+                <span>© 2026</span>
+              </div>
+              <div class="flex flex-1 items-center justify-center">
+                <span class="flex h-40 w-40 items-center justify-center rounded-full bg-deepTeal font-display text-6xl font-semibold tracking-tight text-white shadow-xl dark:bg-cyanAccent dark:text-abyssal">GD</span>
+              </div>
+              <div class="flex items-end justify-between">
+                <div>
+                  <p class="text-lg font-semibold theme-text">Gaston Design</p>
+                  <p class="text-sm theme-muted">Lead UX/UI &amp; Front-end</p>
+                </div>
+                <span class="h-2.5 w-2.5 rounded-full bg-amberAccent"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PROJETS
+         ====================================================================== -->
+    <section id="section-projets" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 sm:py-24">
+      <div class="reveal mb-12 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-sm font-medium text-cyanAccent">Projets sélectionnés</p>
+          <h2 class="mt-2 text-3xl font-semibold tracking-tight theme-text sm:text-4xl">Des produits pensés pour durer</h2>
+        </div>
+        <p class="max-w-md text-sm theme-muted">
+          Sélection de projets UX/UI et front-end : recherche, conception d’interface, systèmes visuels et intégration.
+        </p>
+      </div>
+
+      <div id="featured-project"></div>
+      <div id="projects-grid" class="grid gap-6 md:grid-cols-2"></div>
+    </section>
+
+    <!-- ======================================================================
+         APPROCHE (ABOUT + SKILLS + SERVICES)
+         ====================================================================== -->
+    <section id="section-approche" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 sm:py-24">
+      <div class="grid gap-12 lg:grid-cols-12">
+        <div class="reveal lg:col-span-5">
+          <p class="text-sm font-medium text-cyanAccent">Approche</p>
+          <h2 class="mt-3 text-3xl font-semibold tracking-tight theme-text sm:text-4xl">Un design utile, précis et durable</h2>
+          <p class="mt-5 max-w-md text-base leading-relaxed theme-muted">
+            Je conçois des produits digitaux où l’esthétique sert l’usage : comprendre les besoins réels, structurer l’information, puis livrer des interfaces robustes, accessibles et cohérentes.
+          </p>
+          <div id="skills-list" class="mt-7 flex flex-wrap gap-2"></div>
+        </div>
+
+        <div id="pillars-list" class="grid gap-4 lg:col-span-7"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         EXPÉRIENCE
+         ====================================================================== -->
+    <section id="section-experience" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 sm:py-24">
+      <div class="reveal">
+        <p class="text-sm font-medium text-cyanAccent">Parcours</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight theme-text sm:text-4xl">Expérience</h2>
+      </div>
+      <div id="experience-list" class="mt-10 border-t theme-border"></div>
+    </section>
+
+    <!-- ======================================================================
+         CONTACT
+         ====================================================================== -->
+    <section id="section-contact" class="mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 sm:py-24">
+      <div class="reveal rounded-[32px] bg-deepTeal px-6 py-16 text-center dark:border dark:border-cyanAccent/25 sm:px-12">
+        <p class="text-sm font-medium text-amberAccent">Contact</p>
+        <h2 class="mx-auto mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">Travaillons sur votre prochain produit</h2>
+        <p class="mx-auto mt-4 max-w-xl text-base text-white/70">
+          Disponible pour des missions de design produit, UX/UI, design system et intégration front-end.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <button type="button" data-copy-email class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-deepTeal transition-colors hover:bg-cyanAccent hover:text-white">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            <span data-email-label>hello@gastondesign.com</span>
+          </button>
+          <div id="social-links" class="contents"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         FOOTER
+         ====================================================================== -->
+    <footer class="mx-auto max-w-6xl px-5 pb-16 pt-8 sm:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-t theme-border pt-8 text-sm theme-muted">
+        <span>© <span id="footer-year">2026</span> Gaston Design</span>
+        <a href="#top" class="inline-flex items-center gap-1.5 transition-colors hover:text-cyanAccent">
+          Haut de page
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
+        </a>
+        <span>Paris &amp; Remote</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ========================================================================
+       TIROIR D'ÉTUDE DE CAS
+       ======================================================================== -->
+  <div id="case-study-drawer" class="drawer-backdrop fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+    <div id="drawer-overlay-close" class="h-full flex-1"></div>
+
+    <div class="drawer-panel flex h-full w-full max-w-2xl flex-col justify-between overflow-y-auto border-l theme-border theme-surface p-6 shadow-2xl sm:p-10">
+      <div>
+        <div class="flex items-center justify-between border-b theme-border pb-6">
+          <div class="flex items-center gap-3">
+            <span id="drawer-number" class="rounded-full bg-cyanAccent/15 px-2.5 py-1 font-mono text-xs font-semibold text-cyanAccent">[01]</span>
+            <span id="drawer-category" class="text-xs uppercase tracking-wider theme-muted">Catégorie</span>
+          </div>
+          <button id="drawer-close-btn" type="button" aria-label="Fermer l'étude de cas" class="flex h-9 w-9 items-center justify-center rounded-full border theme-border theme-canvas theme-text transition-colors hover:border-cyanAccent">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        <div class="mt-8">
+          <h2 id="drawer-title" class="text-2xl font-semibold tracking-tight theme-text sm:text-3xl">Titre du projet</h2>
+          <p id="drawer-subtitle" class="mt-3 text-base leading-relaxed theme-muted"></p>
+        </div>
+
+        <div id="drawer-metrics" class="mt-7 grid grid-cols-3 gap-3 rounded-2xl border theme-border theme-canvas p-4"></div>
+
+        <div class="mt-8 space-y-7">
+          <div>
+            <h3 class="mb-2 text-sm font-semibold text-cyanAccent">Le défi</h3>
+            <p id="drawer-challenge" class="text-sm leading-relaxed theme-text sm:text-base"></p>
+          </div>
+          <div class="rounded-2xl border theme-border theme-canvas p-5">
+            <h3 class="mb-2 text-sm font-semibold theme-text">Architecture &amp; décisions UI</h3>
+            <p id="drawer-architecture" class="text-sm leading-relaxed theme-muted"></p>
+            <div id="drawer-tags" class="mt-4 flex flex-wrap gap-2"></div>
+          </div>
+          <div>
+            <h3 class="mb-2 text-sm font-semibold text-amberAccent">Impact &amp; résultats</h3>
+            <p id="drawer-outcome" class="text-sm leading-relaxed theme-text sm:text-base"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 flex items-center justify-between gap-4 border-t theme-border pt-6">
+        <span class="text-xs theme-muted">Rôle : Lead UX/UI &amp; Front-end</span>
+        <button id="drawer-next-btn" type="button" class="inline-flex items-center gap-2 rounded-full bg-deepTeal px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-cyanAccent dark:bg-cyanAccent dark:text-abyssal dark:hover:bg-amberAccent sm:text-sm">
+          Projet suivant
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast-notification" class="pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 opacity-0 transition-all duration-300 ease-futuristic" role="status" aria-live="polite">
+    <div class="flex items-center gap-2.5 rounded-full border border-white/10 bg-deepTeal px-4 py-2.5 text-xs font-semibold text-white shadow-lg dark:bg-cyanAccent dark:text-abyssal">
+      <span class="h-2 w-2 rounded-full bg-amberAccent dark:bg-abyssal"></span>
+      <span id="toast-message">Action effectuée</span>
+    </div>
+  </div>
+
+  <script>
+    // ========================================================================
+    // DONNÉES
+    // ========================================================================
+    const EMAIL_ADDRESS = 'hello@gastondesign.com';
+
+    const PROJECTS_DATA = {
+      aether: {
+        id: 'aether',
+        next: 'kinetix',
+        number: '[01]',
+        category: 'SaaS & Data Visualization',
+        title: 'Aether OS — Console de Télémétrie Cloud',
+        subtitle: 'Refonte complète de l’expérience de supervision multi-clusters pour réduire le temps de diagnostic lors des incidents critiques.',
+        metrics: [
+          { label: 'Temps de diagnostic', value: '-46%' },
+          { label: 'Adoption équipe', value: '94%' },
+          { label: 'Score SUS', value: '89/100' }
+        ],
+        challenge: 'Les ingénieurs DevOps devaient jongler entre 6 onglets denses et des graphiques surchargés pour identifier l’origine d’un pic de latence, générant une fatigue cognitive importante sous pression.',
+        architecture: 'Introduction d’une grille modulaire à densité adaptative, hiérarchisation chromatique stricte (fond clair apaisant, cyan pour les flux nominaux, ambre uniquement pour les alertes) et création d’une palette de commandes clavier instantanée.',
+        tags: ['Architecture Information', 'Design System', 'Data-Viz SVG', 'Accessibilité AAA'],
+        outcome: 'Réduction de près de moitié du temps moyen de résolution (MTTR) dès les 6 premières semaines suivant le déploiement auprès de 12 000 utilisateurs actifs.',
+        previewSvg: `
+          <div class="flex justify-between items-center font-mono text-[10px] theme-muted">
+            <span class="text-cyanAccent font-semibold">[01] AETHER CLOUD</span>
+            <span>12ms LATENCE</span>
+          </div>
+          <div class="my-auto p-3 rounded-xl theme-canvas border theme-border">
+            <svg class="w-full h-24 overflow-visible" viewBox="0 0 220 70" fill="none">
+              <path d="M0 58 Q 40 50, 75 32 T 145 24 T 220 8" stroke="#2BA4AC" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="145" cy="24" r="4" fill="#2BA4AC"/>
+              <circle cx="220" cy="8" r="4.5" fill="#F39322"/>
+            </svg>
+          </div>
+          <div class="font-mono text-[10px] theme-muted flex justify-between">
+            <span>TÉLÉMÉTRIE TEMPS RÉEL</span>
+            <span class="theme-text">99.98% UPTIME</span>
+          </div>
+        `
+      },
+      kinetix: {
+        id: 'kinetix',
+        next: 'prisma',
+        number: '[02]',
+        category: 'Fintech & Mobile App',
+        title: 'Kinetix — Trésorerie Automatisée B2B',
+        subtitle: 'Conception d’une application mobile et web permettant aux directeurs financiers de piloter leurs flux multi-devises en temps réel.',
+        metrics: [
+          { label: 'Validation virements', value: '8 sec' },
+          { label: 'Conversion onboarding', value: '+34%' },
+          { label: 'Note App Store', value: '4.9 ★' }
+        ],
+        challenge: 'Les outils bancaires d’entreprise souffrent d’interfaces rigides et anxiogènes. L’enjeu était d’apporter la fluidité d’une néobanque grand public tout en conservant une traçabilité comptable irréprochable.',
+        architecture: 'Développement d’un système de cartes virtuelles interactives, gestes de validation biométrique sécurisés et tableau prévisionnel de trésorerie par glissement temporel.',
+        tags: ['Mobile-First', 'Micro-Interactions', 'Parcours KYC', 'Prototypage'],
+        outcome: 'Augmentation de 34% du taux d’activation des comptes entreprises et validation des virements groupés en moins de 8 secondes.',
+        previewSvg: `
+          <div class="flex justify-between items-center font-mono text-[10px] theme-muted">
+            <span class="text-cyanAccent font-semibold">[02] KINETIX PAY</span>
+            <span class="text-amberAccent">ISO 20022</span>
+          </div>
+          <div class="my-auto bg-deepTeal text-white rounded-xl p-4 border border-cyanAccent/30 flex flex-col justify-between h-28">
+            <div class="flex justify-between font-mono text-[9px] opacity-70">
+              <span>CORP TREASURY</span>
+              <span>•••• 4829</span>
+            </div>
+            <div class="text-xl font-bold tracking-tight">148 920,00 €</div>
+            <div class="font-mono text-[9px] text-cyanAccent">+4.15% YIELD ACTIF</div>
+          </div>
+          <div class="font-mono text-[10px] theme-muted flex justify-between">
+            <span>VALIDATION BIOMÉTRIQUE</span>
+            <span class="theme-text">8 SEC</span>
+          </div>
+        `
+      },
+      prisma: {
+        id: 'prisma',
+        next: 'lumina',
+        number: '[03]',
+        category: 'Design System & Tokens',
+        title: 'Prisma — Architecture Multi-Marques',
+        subtitle: 'Création d’un langage visuel unifié et d’une bibliothèque de 140+ composants synchronisés entre Figma et React.',
+        metrics: [
+          { label: 'Vélocité UI', value: 'x2.4' },
+          { label: 'Composants', value: '142' },
+          { label: 'Dette visuelle', value: '-78%' }
+        ],
+        challenge: 'Quatre produits distincts du groupe présentaient des incohérences d’interaction, des contrastes insuffisants et une duplication constante du code front-end.',
+        architecture: 'Structuration d’une architecture de jetons (Design Tokens) à trois niveaux (Primitifs, Sémantiques, Composants) via Figma Variables, couplée à une documentation interactive Storybook.',
+        tags: ['Figma Variables', 'Tokens JSON', 'React / Tailwind', 'Gouvernance UI'],
+        outcome: 'Division par deux du temps de livraison des nouvelles fonctionnalités et conformité WCAG AA/AAA sur l’ensemble de l’écosystème.',
+        previewSvg: `
+          <div class="flex justify-between items-center font-mono text-[10px] theme-muted">
+            <span class="text-cyanAccent font-semibold">[03] PRISMA TOKENS</span>
+            <span>v3.0</span>
+          </div>
+          <div class="my-auto grid grid-cols-3 gap-2">
+            <div class="p-2.5 rounded-xl theme-canvas border theme-border text-center">
+              <div class="text-xl font-bold theme-text">Aa</div>
+              <div class="font-mono text-[8px] theme-muted mt-1">SCALE 1.25</div>
+            </div>
+            <div class="p-2.5 rounded-xl theme-canvas border theme-border flex flex-col justify-center gap-1.5">
+              <div class="h-2.5 w-full rounded-full bg-cyanAccent"></div>
+              <div class="h-2.5 w-2/3 rounded-full bg-amberAccent"></div>
+            </div>
+            <div class="p-2.5 rounded-xl theme-canvas border theme-border text-center flex flex-col justify-center">
+              <div class="text-sm font-bold text-cyanAccent">142</div>
+              <div class="font-mono text-[8px] theme-muted">COMPOSANTS</div>
+            </div>
+          </div>
+          <div class="font-mono text-[10px] theme-muted flex justify-between">
+            <span>FIGMA ↔ REACT</span>
+            <span class="theme-text">WCAG AAA</span>
+          </div>
+        `
+      },
+      lumina: {
+        id: 'lumina',
+        next: 'aether',
+        number: '[04]',
+        category: 'HealthTech & IA',
+        title: 'Lumina — Copilote de Diagnostic Clinique',
+        subtitle: 'Interface d’imagerie médicale assistée par IA conçue en co-création avec 35 radiologues et praticiens hospitaliers.',
+        metrics: [
+          { label: 'Temps d’analyse', value: '-42%' },
+          { label: 'Précision perçue', value: '97%' },
+          { label: 'Centres équipés', value: '18' }
+        ],
+        challenge: 'Les algorithmes d’IA génèrent souvent trop de faux positifs visuels qui polluent la lecture des clichés médicaux et ralentissent le praticien.',
+        architecture: 'Conception d’un mode « Calme Clinique » : les annotations IA restent invisibles par défaut et se révèlent par un survol magnétique doux avec indice de confiance expliqué en langage clair.',
+        tags: ['Recherche Terrain', 'IA Explicable', 'Ergonomie Cognitive', 'Prototypage'],
+        outcome: 'Adopté dans 18 établissements hospitaliers avec une baisse mesurée de 42% du temps de lecture par dossier patient.',
+        previewSvg: `
+          <div class="flex justify-between items-center font-mono text-[10px] theme-muted">
+            <span class="text-cyanAccent font-semibold">[04] LUMINA IA</span>
+            <span>CERTIFIÉ CE</span>
+          </div>
+          <div class="my-auto flex items-center justify-center p-2 rounded-xl theme-canvas border theme-border">
+            <svg class="w-24 h-24" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="38" stroke="#2BA4AC" stroke-opacity="0.35" stroke-dasharray="3 3"/>
+              <circle cx="50" cy="50" r="22" stroke="#2BA4AC" stroke-width="1.5"/>
+              <circle cx="50" cy="50" r="10" fill="#2BA4AC" fill-opacity="0.25"/>
+              <circle cx="66" cy="34" r="4" fill="#F39322"/>
+            </svg>
+          </div>
+          <div class="font-mono text-[10px] theme-muted flex justify-between">
+            <span>DIAGNOSTIC ASSISTÉ</span>
+            <span class="text-cyanAccent font-semibold">-42% TEMPS</span>
+          </div>
+        `
+      }
+    };
+    const PROJECT_ORDER = ['aether', 'kinetix', 'prisma', 'lumina'];
+
+    const SKILLS_DATA = [
+      'Figma & Variables',
+      'React & TypeScript',
+      'HTML / CSS & Tailwind',
+      'Design Systems',
+      'Prototypage interactif',
+      'Recherche utilisateur',
+      'Accessibilité WCAG',
+      'Adobe Illustrator',
+    ];
+
+    const PILLARS_DATA = [
+      {
+        title: 'Comprendre',
+        description: 'Cadrage, recherche utilisateur, audits heuristiques et analyse des parcours pour réduire la friction.',
+      },
+      {
+        title: 'Concevoir',
+        description: 'Architecture de l’information, interfaces et design systems documentés, à base de jetons de design.',
+      },
+      {
+        title: 'Livrer',
+        description: 'Intégration front-end soignée, micro-interactions, tests et itérations au plus près de la production.',
+      },
+    ];
+
+    const EXPERIENCE_DATA = [
+      {
+        period: '2023 — Auj.',
+        role: 'Lead Product Designer & Front-end',
+        company: 'Indépendant · Paris & Remote',
+        description: 'Accompagnement de scale-ups SaaS, fintech et healthtech : cadrage UX, design systems et intégration React.',
+      },
+      {
+        period: '2020 — 2023',
+        role: 'Senior UX/UI Designer',
+        company: 'Studio produit',
+        description: 'Conception de plateformes B2B, création d’une bibliothèque de 140+ composants synchronisés Figma ↔ React.',
+      },
+      {
+        period: '2018 — 2020',
+        role: 'UI Designer & Intégrateur',
+        company: 'Agence digitale',
+        description: 'Interfaces web et mobiles, prototypage interactif et intégration HTML / CSS pour des marques grand public.',
+      },
+    ];
+
+    const SOCIAL_LINKS = [
+      { label: 'LinkedIn', url: 'https://www.linkedin.com/' },
+      { label: 'Dribbble', url: 'https://dribbble.com/' },
+    ];
+
+    // ========================================================================
+    // UTILITAIRES
+    // ========================================================================
+    const escapeHtml = (value) =>
+      String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+    const ARROW_UP_RIGHT = '<svg class="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M9 7h8v8" /></svg>';
+
+    function projectVisual(project, aspectClass) {
+      return `
+        <div class="${aspectClass} overflow-hidden border-b theme-border bg-gradient-to-br from-cyanAccent/[0.06] via-transparent to-amberAccent/[0.05]">
+          <div class="card-visual flex h-full items-center justify-center p-6 sm:p-10">
+            <div class="flex aspect-[340/245] w-full max-w-sm flex-col justify-between rounded-2xl border theme-border theme-surface p-4 shadow-sm">
+              ${project.previewSvg}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function projectMeta(project) {
+      return `
+        <div class="flex items-center justify-between text-xs theme-muted">
+          <span>${escapeHtml(project.category)}</span>
+          <span class="font-mono">${escapeHtml(project.number)}</span>
+        </div>`;
+    }
+
+    // ========================================================================
+    // RENDU DES SECTIONS
+    // ========================================================================
+    function renderProjects() {
+      const [featuredId, ...restIds] = PROJECT_ORDER;
+      const featured = PROJECTS_DATA[featuredId];
+
+      document.getElementById('featured-project').innerHTML = `
+        <article role="button" tabindex="0" data-project="${featured.id}" aria-label="Ouvrir l’étude de cas ${escapeHtml(featured.title)}" class="reveal editorial-card group mb-6 cursor-pointer lg:grid lg:grid-cols-12">
+          <div class="lg:col-span-7 lg:border-r theme-border">${projectVisual(featured, 'aspect-[16/10] lg:aspect-auto lg:h-full lg:border-b-0')}</div>
+          <div class="flex flex-col justify-center p-6 sm:p-8 lg:col-span-5">
+            ${projectMeta(featured)}
+            <h3 class="mt-3 text-2xl font-semibold tracking-tight theme-text transition-colors group-hover:text-cyanAccent sm:text-3xl">${escapeHtml(featured.title)}</h3>
+            <p class="mt-3 text-sm leading-relaxed theme-muted">${escapeHtml(featured.subtitle)}</p>
+            <div class="mt-6 grid grid-cols-3 gap-3 border-t theme-border pt-5">
+              ${featured.metrics.map((metric) => `
+                <div>
+                  <div class="text-lg font-semibold tracking-tight theme-text">${escapeHtml(metric.value)}</div>
+                  <div class="mt-0.5 text-[11px] leading-tight theme-muted">${escapeHtml(metric.label)}</div>
+                </div>`).join('')}
+            </div>
+            <span class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyanAccent">Voir l’étude de cas ${ARROW_UP_RIGHT}</span>
+          </div>
+        </article>`;
+
+      document.getElementById('projects-grid').innerHTML = restIds
+        .map((id) => PROJECTS_DATA[id])
+        .map((project, index) => {
+          const isWide = index === restIds.length - 1 && restIds.length % 2 === 1;
+          return `
+          <article role="button" tabindex="0" data-project="${project.id}" aria-label="Ouvrir l’étude de cas ${escapeHtml(project.title)}" class="reveal editorial-card group cursor-pointer ${isWide ? 'md:col-span-2' : ''}" style="transition-delay: ${(index % 2) * 80}ms;">
+            ${projectVisual(project, isWide ? 'aspect-[16/10] md:aspect-[21/8]' : 'aspect-[16/10]')}
+            <div class="p-6">
+              ${projectMeta(project)}
+              <h3 class="mt-3 text-xl font-semibold theme-text transition-colors group-hover:text-cyanAccent">${escapeHtml(project.title)}</h3>
+              <p class="mt-2 line-clamp-2 text-sm theme-muted">${escapeHtml(project.subtitle)}</p>
+              <span class="mt-5 inline-flex items-center gap-2 text-sm font-medium text-cyanAccent">Voir l’étude de cas ${ARROW_UP_RIGHT}</span>
+            </div>
+          </article>`;
+        })
+        .join('');
+    }
+
+    function renderApproach() {
+      document.getElementById('skills-list').innerHTML = SKILLS_DATA.map((skill) => `
+        <span class="rounded-full border theme-border theme-surface px-3.5 py-1.5 text-xs theme-muted">${escapeHtml(skill)}</span>`).join('');
+
+      document.getElementById('pillars-list').innerHTML = PILLARS_DATA.map((pillar, index) => `
+        <div class="reveal rounded-3xl border theme-border theme-surface p-6" style="transition-delay: ${index * 80}ms;">
+          <span class="font-mono text-xs text-cyanAccent">${String(index + 1).padStart(2, '0')}</span>
+          <h3 class="mt-2 text-lg font-semibold theme-text">${escapeHtml(pillar.title)}</h3>
+          <p class="mt-2 text-sm leading-relaxed theme-muted">${escapeHtml(pillar.description)}</p>
+        </div>`).join('');
+    }
+
+    function renderExperience() {
+      document.getElementById('experience-list').innerHTML = EXPERIENCE_DATA.map((item) => `
+        <div class="reveal grid gap-3 border-b theme-border py-6 sm:grid-cols-[150px_1fr]">
+          <span class="font-semibold text-cyanAccent">${escapeHtml(item.period)}</span>
+          <div>
+            <h3 class="text-lg font-semibold theme-text">${escapeHtml(item.role)}</h3>
+            <p class="mt-1 text-sm theme-muted">${escapeHtml(item.company)}</p>
+            ${item.description ? `<p class="mt-2 max-w-2xl text-sm leading-relaxed theme-muted">${escapeHtml(item.description)}</p>` : ''}
+          </div>
+        </div>`).join('');
+    }
+
+    function renderContact() {
+      document.getElementById('social-links').innerHTML = SOCIAL_LINKS.slice(0, 2).map((link) => `
+        <a href="${escapeHtml(link.url)}" target="_blank" rel="noreferrer" class="group inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3.5 text-sm font-medium text-white transition-colors hover:border-white">
+          ${escapeHtml(link.label)} ${ARROW_UP_RIGHT}
+        </a>`).join('');
+      document.querySelectorAll('[data-email-label]').forEach((el) => { el.textContent = EMAIL_ADDRESS; });
+      document.getElementById('footer-year').textContent = new Date().getFullYear();
+    }
+
+    renderProjects();
+    renderApproach();
+    renderExperience();
+    renderContact();
+
+    // ========================================================================
+    // TOAST
+    // ========================================================================
+    const toastEl = document.getElementById('toast-notification');
+    const toastMsgEl = document.getElementById('toast-message');
+    let toastTimeout;
+
+    function showToast(message) {
+      toastMsgEl.textContent = message;
+      toastEl.classList.remove('opacity-0', 'translate-y-3');
+      toastEl.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toastEl.classList.remove('opacity-100', 'translate-y-0');
+        toastEl.classList.add('opacity-0', 'translate-y-3');
+      }, 2600);
+    }
+
+    // ========================================================================
+    // THÈME CLAIR / SOMBRE
+    // ========================================================================
+    const htmlEl = document.documentElement;
+
+    document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+      const isDark = htmlEl.classList.toggle('dark');
+      try { localStorage.setItem('portfolio-theme', isDark ? 'dark' : 'light'); } catch (e) {}
+      showToast(isDark ? 'Mode sombre activé' : 'Mode clair activé');
+    });
+
+    // ========================================================================
+    // MENU MOBILE
+    // ========================================================================
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+
+    function setMobileMenu(open) {
+      mobileMenu.classList.toggle('open', open);
+      mobileMenuBtn.setAttribute('aria-expanded', String(open));
+      mobileMenuBtn.setAttribute('aria-label', open ? 'Fermer le menu mobile' : 'Ouvrir le menu mobile');
+      document.getElementById('icon-menu').classList.toggle('hidden', open);
+      document.getElementById('icon-close').classList.toggle('hidden', !open);
+    }
+
+    mobileMenuBtn.addEventListener('click', () => setMobileMenu(!mobileMenu.classList.contains('open')));
+    document.querySelectorAll('.mobile-link').forEach((link) => link.addEventListener('click', () => setMobileMenu(false)));
+
+    // ========================================================================
+    // SECTION ACTIVE DANS LA NAVIGATION
+    // ========================================================================
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    function setActiveNav(id) {
+      navLinks.forEach((link) => {
+        const active = link.dataset.nav === id;
+        link.classList.toggle('bg-[var(--accent-soft)]', active);
+        link.classList.toggle('font-semibold', active);
+        link.classList.toggle('text-cyanAccent', active);
+        link.classList.toggle('theme-muted', !active);
+        if (active) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    }
+
+    const OBSERVED_SECTIONS = ['hero', 'projets', 'approche', 'experience', 'contact'];
+    const sectionsInBand = new Set();
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const id = entry.target.id.replace('section-', '');
+        if (entry.isIntersecting) sectionsInBand.add(id);
+        else sectionsInBand.delete(id);
+      });
+      const current = OBSERVED_SECTIONS.filter((id) => sectionsInBand.has(id)).pop();
+      if (current) setActiveNav(current);
+    }, { rootMargin: '-45% 0px -50% 0px' });
+
+    OBSERVED_SECTIONS.forEach((id) => {
+      sectionObserver.observe(document.getElementById(`section-${id}`));
+    });
+
+    // ========================================================================
+    // APPARITION AU SCROLL
+    // ========================================================================
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+
+    // ========================================================================
+    // TIROIR D'ÉTUDE DE CAS
+    // ========================================================================
+    const drawer = document.getElementById('case-study-drawer');
+    let currentProjectId = PROJECT_ORDER[0];
+    let lastFocusedElement = null;
+
+    function setPageInert(isInert) {
+      document.querySelectorAll('body > header, body > main').forEach((el) => { el.inert = isInert; });
+      drawer.inert = !isInert;
+    }
+
+    drawer.inert = true;
+
+    function openCaseStudy(projectKey) {
+      const data = PROJECTS_DATA[projectKey];
+      if (!data) return;
+      currentProjectId = projectKey;
+      if (!drawer.classList.contains('open')) lastFocusedElement = document.activeElement;
+
+      document.getElementById('drawer-number').textContent = data.number;
+      document.getElementById('drawer-category').textContent = data.category;
+      document.getElementById('drawer-title').textContent = data.title;
+      document.getElementById('drawer-subtitle').textContent = data.subtitle;
+      document.getElementById('drawer-challenge').textContent = data.challenge;
+      document.getElementById('drawer-architecture').textContent = data.architecture;
+      document.getElementById('drawer-outcome').textContent = data.outcome;
+
+      document.getElementById('drawer-metrics').innerHTML = data.metrics.map((metric) => `
+        <div class="text-center">
+          <div class="text-lg font-semibold tracking-tight theme-text sm:text-xl">${escapeHtml(metric.value)}</div>
+          <div class="mt-0.5 text-[11px] theme-muted">${escapeHtml(metric.label)}</div>
+        </div>`).join('');
+
+      document.getElementById('drawer-tags').innerHTML = data.tags.map((tag) => `
+        <span class="rounded-full border theme-border theme-surface px-2.5 py-1 text-[11px] theme-text">${escapeHtml(tag)}</span>`).join('');
+
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      setPageInert(true);
+      drawer.querySelector('.drawer-panel').scrollTop = 0;
+      document.body.style.overflow = 'hidden';
+      document.getElementById('drawer-close-btn').focus({ preventScroll: true });
+    }
+
+    function closeCaseStudy() {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      setPageInert(false);
+      document.body.style.overflow = '';
+      if (lastFocusedElement) lastFocusedElement.focus({ preventScroll: true });
+    }
+
+    document.querySelectorAll('[data-project]').forEach((el) => {
+      el.addEventListener('click', () => openCaseStudy(el.dataset.project));
+      el.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openCaseStudy(el.dataset.project);
+        }
+      });
+    });
+
+    document.getElementById('drawer-close-btn').addEventListener('click', closeCaseStudy);
+    document.getElementById('drawer-overlay-close').addEventListener('click', closeCaseStudy);
+    document.getElementById('drawer-next-btn').addEventListener('click', () => {
+      openCaseStudy(PROJECTS_DATA[currentProjectId]?.next || PROJECT_ORDER[0]);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        if (drawer.classList.contains('open')) closeCaseStudy();
+        else if (mobileMenu.classList.contains('open')) setMobileMenu(false);
+      }
+    });
+
+    // ========================================================================
+    // COPIE D'E-MAIL
+    // ========================================================================
+    async function copyEmailToClipboard() {
+      try {
+        await navigator.clipboard.writeText(EMAIL_ADDRESS);
+      } catch (error) {
+        const tempInput = document.createElement('input');
+        tempInput.value = EMAIL_ADDRESS;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(tempInput);
+      }
+      showToast('Adresse e-mail copiée dans le presse-papiers');
+    }
+
+    document.querySelectorAll('[data-copy-email]').forEach((btn) => btn.addEventListener('click', copyEmailToClipboard));
+  </script>
+</body>
+</html>
